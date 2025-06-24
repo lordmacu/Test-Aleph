@@ -1,68 +1,133 @@
-# CodeIgniter 4 Application Starter
+Claro, aquí tienes el contenido completo en formato Markdown, listo para que lo copies y lo pegues directamente en un archivo llamado `README.md` en la raíz de tu proyecto.
 
-## What is CodeIgniter?
+````markdown
+# Integrador CMDB con Aleph Manager
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+Este es un proyecto web desarrollado con **CodeIgniter 4** que sirve como intermediario para gestionar registros de una CMDB (Base de Datos de Gestión de la Configuración) a través de la API de **Aleph Manager**.
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+La aplicación permite importar categorías desde la API, visualizar los registros de la CMDB asociados a cada categoría, y realizar operaciones de importación y exportación masiva de dichos registros mediante archivos (CSV, Excel).
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+## ✨ Características Principales
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+-   **Importación de Categorías**: Sincroniza las categorías de la CMDB desde la API de Aleph y las almacena en una base de datos local.
+-   **Visualización de Registros**: Lista los registros de la CMDB filtrados por categoría.
+-   **Exportación de Datos**: Genera un archivo (probablemente CSV o Excel) con todos los registros de una categoría específica.
+-   **Importación de Datos**: Permite subir un archivo con nuevos registros o modificaciones para ser procesados y enviados a la API de Aleph.
+-   **Arquitectura Modular**: El código está organizado en Controladores, Modelos, Librerías y Servicios, siguiendo las mejores prácticas de CodeIgniter.
+-   **Comunicación Segura**: Utiliza una clave de API para autenticar las solicitudes contra Aleph Manager.
 
-## Installation & updates
+## 🛠️ Stack Tecnológico
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+-   **Framework**: [CodeIgniter 4](https://codeigniter.com/)
+-   **Lenguaje**: PHP 8.x
+-   **Base de Datos**: MySQL, MariaDB, o cualquier otra soportada por CodeIgniter.
+-   **Dependencias**: [CodeIgniter CURLRequest](https://codeigniter.com/user_guide/libraries/curlrequest.html) para las llamadas a la API.
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+## 🚀 Instalación y Configuración
 
-## Setup
+Sigue estos pasos para poner en marcha el proyecto en un entorno de desarrollo local.
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+### Prerrequisitos
 
-## Important Change with index.php
+-   PHP 8.0 o superior
+-   Composer
+-   Un servidor de base de datos (Ej. MySQL, MariaDB)
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+### Pasos
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+1.  **Clonar el repositorio:**
+    ```bash
+    git clone <URL_DEL_REPOSITORIO>
+    cd <NOMBRE_DEL_PROYECTO>
+    ```
 
-**Please** read the user guide for a better explanation of how CI4 works!
+2.  **Instalar dependencias de PHP:**
+    ```bash
+    composer install
+    ```
 
-## Repository Management
+3.  **Configurar el entorno:**
+    Copia el archivo de entorno de ejemplo y configúralo.
+    ```bash
+    cp env .env
+    ```
+    Abre el archivo `.env` y ajusta las siguientes secciones:
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+    -   **URL del sitio** (importante para que CodeIgniter funcione correctamente):
+        ```ini
+        app.baseURL = 'http://localhost:8080'
+        ```
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+    -   **Configuración de la Base de Datos**:
+        ```ini
+        database.default.hostname = localhost
+        database.default.database = nombre_de_tu_db
+        database.default.username = tu_usuario_db
+        database.default.password = tu_password_db
+        database.default.DBDriver = MySQLi
+        ```
 
-## Server Requirements
+4.  **Ejecutar las migraciones de la base de datos:**
+    Para crear la tabla `categorias` y otras que puedas necesitar, ejecuta el siguiente comando:
+    ```bash
+    php spark migrate
+    ```
+    *Nota: Asegúrate de tener un archivo de migración para la tabla `categorias`.*
 
-PHP version 8.1 or higher is required, with the following extensions installed:
+5.  **Configurar la API de Aleph (¡Importante!)**
+    Actualmente, la URL base y la clave de la API están fijas en el archivo `app/Libraries/AlephAPI.php`. **Se recomienda encarecidamente** moverlas al archivo `.env` por seguridad y flexibilidad.
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+    -   Añade estas líneas a tu archivo `.env`:
+        ```ini
+        aleph.api.baseUrl = '[https://qa.alephmanager.com/API/](https://qa.alephmanager.com/API/)'
+        aleph.api.key = 'zkUMrLN8xKEtrCr4Y7hYfLw8k!utbb'
+        ```
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
-> - The end of life date for PHP 8.1 will be December 31, 2025.
+    -   Modifica el constructor de `app/Libraries/AlephAPI.php` para leer estas variables:
+        ```php
+        public function __construct()
+        {
+            $this->client = \Config\Services::curlrequest();
+            // Cargar las variables desde el .env
+            $this->base_url = getenv('aleph.api.baseUrl');
+            $this->api_key = getenv('aleph.api.key');
+        }
+        ```
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+6.  **Iniciar el servidor de desarrollo:**
+    ```bash
+    php spark serve
+    ```
+    La aplicación estará disponible en `http://localhost:8080`.
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+## 📖 Uso de la Aplicación
+
+1.  **Página Principal (`/` o `/categorias`)**: Al acceder, verás la lista de categorías almacenadas localmente. Si está vacía, puedes importarlas.
+2.  **Importar Categorías**: Haz clic en el botón "Importar Categorías". Esto ejecutará una llamada AJAX al endpoint `/categorias/importar-ajax`, que traerá las categorías desde la API de Aleph y las guardará en tu base de datos.
+3.  **Ver Registros de CMDB**: Haz clic en el nombre de una categoría para navegar a la vista `cmdb/{id}`. Esta página mostrará una tabla con todos los registros de la CMDB que pertenecen a esa categoría.
+4.  **Exportar Registros**: En la vista de registros, un botón "Exportar" te permitirá descargar un archivo con todos los datos de esa vista.
+5.  **Importar Registros**: Un botón "Importar" abrirá un formulario (o modal) para que puedas subir un archivo (`.csv`, `.xls`, `.xlsx`). Los datos del archivo serán procesados y enviados a la API de Aleph para crear o actualizar registros.
+
+## 🗂️ Estructura del Proyecto
+
+A continuación se describe el propósito de los archivos clave que proporcionaste:
+
+-   `app/Controllers/CategoriaController.php`: Gestiona la lógica relacionada con las categorías: listarlas desde la base de datos local e importarlas desde la API.
+-   `app/Controllers/CmdbController.php`: Controla las operaciones sobre los registros de la CMDB: visualización por categoría, exportación a archivo e importación desde archivo.
+-   `app/Libraries/AlephAPI.php`: Una clase encapsulada (wrapper) que maneja toda la comunicación con la API externa de Aleph Manager. Centraliza los endpoints y la autenticación.
+-   `app/Models/CategoryModel.php`: Modelo de CodeIgniter que interactúa con la tabla `categorias` de la base de datos. Incluye lógica para evitar la inserción de categorías duplicadas.
+-   `app/Services/CmdbService.php`: (Referenciado pero no provisto) Contiene la lógica de negocio para procesar la exportación e importación de archivos, separando esta responsabilidad del controlador.
+-   `app/Config/Routes.php`: Define las URLs de la aplicación y las asocia a los métodos de los controladores correspondientes.
+-   `app/Helpers/text_helper.php`: (Contiene `slugify`) Un archivo de ayuda con funciones de utilidad. En este caso, para convertir texto a un formato amigable para URLs.
+
+## 🗺️ Rutas Definidas (Endpoints)
+
+| Método | URI                               | Controlador::Método                  | Descripción                                          |
+| :----- | :-------------------------------- | :----------------------------------- | :--------------------------------------------------- |
+| `GET`  | `/` ó `/categorias`               | `CategoriaController::index`         | Muestra la lista de categorías.                      |
+| `POST` | `/categorias/importar-ajax`       | `CategoriaController::importarCategoriasAjax`  | Importa las categorías desde la API vía AJAX.        |
+| `GET`  | `/cmdb/(:num)`                    | `CmdbController::index/$1`           | Muestra los registros de una categoría específica.   |
+| `GET`  | `/cmdb/exportar/(:num)`           | `CmdbController::exportar/$1`        | Inicia la exportación de registros para una categoría. |
+| `GET`  | `/cmdb/importar-vista/(:num)`     | `CmdbController::importarVista/$1`   | Muestra el formulario para importar archivos.        |
+| `POST` | `/cmdb/importar`                  | `CmdbController::importar`           | Procesa el archivo subido para la importación.       |
+````

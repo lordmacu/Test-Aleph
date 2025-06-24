@@ -21,6 +21,8 @@
 #--------------------------------------------------------------------
 
 # app.baseURL = ''
+# aleph.api.baseUrl = 'https://qa.url.com/API/'
+# aleph.api.key = 'token'
 # If you have trouble with `.`, you could also use `_`.
 # app_baseURL = ''
 # app.forceGlobalSecureRequests = false

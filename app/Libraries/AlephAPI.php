@@ -10,18 +10,20 @@ use CodeIgniter\HTTP\CURLRequest;
 class AlephAPI
 {
     /**
-     * Aleph API Key (static for now).
+     * Base URL for the Aleph API.
+     * Loaded from the .env file.
      *
      * @var string
      */
-    protected string $api_key = 'zkUMrLN8xKEtrCr4Y7hYfLw8k!utbb';
+    protected string $base_url;
 
     /**
-     * Base URL for the Aleph API.
+     * Aleph API Key.
+     * Loaded from the .env file.
      *
      * @var string
      */
-    protected string $base_url = 'https://qa.alephmanager.com/API/';
+    protected string $api_key;
 
     /**
      * HTTP client to make API requests.
@@ -31,11 +33,24 @@ class AlephAPI
     protected CURLRequest $client;
 
     /**
-     * Initialize the CURL client.
+     * Initialize the CURL client and load configuration from the .env file.
      */
     public function __construct()
     {
         $this->client = \Config\Services::curlrequest();
+
+        // Cargar la configuración desde las variables de entorno (.env)
+        $this->base_url = getenv('aleph.api.baseUrl');
+        $this->api_key = getenv('aleph.api.key');
+
+        // Es una buena práctica verificar si las variables se cargaron correctamente
+        if (empty($this->base_url) || empty($this->api_key)) {
+            // Detiene la ejecución o lanza una excepción si las variables no están definidas
+            // para evitar errores difíciles de depurar más adelante.
+            log_message('error', 'La URL base o la clave de la API de Aleph no están configuradas en el archivo .env');
+            // Opcionalmente, puedes lanzar una excepción para detener la ejecución:
+            // throw new \Exception('La URL base o la clave de la API de Aleph no están configuradas en el archivo .env');
+        }
     }
 
     /**
@@ -47,6 +62,7 @@ class AlephAPI
      */
     protected function post(string $endpoint, array $data = []): array
     {
+        // Añade la clave de la API a cada solicitud
         $data['api_key'] = $this->api_key;
 
         try {
@@ -56,7 +72,7 @@ class AlephAPI
 
             return json_decode($response->getBody(), true) ?? [];
         } catch (\Throwable $e) {
-            // You could log this in production
+            log_message('error', '[AlephAPI] API connection failed: ' . $e->getMessage());
             return ['error' => 'API connection failed: ' . $e->getMessage()];
         }
     }
