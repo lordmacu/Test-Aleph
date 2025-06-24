@@ -29,15 +29,12 @@ class CategoryModel extends Model
      */
     public function insertIfNotExists(array $data): bool
     {
-        // Check if a category with this name already exists
         $existing = $this->where('nombre', $data['nombre'])->first();
 
-        // If it doesn't exist, insert it
         if (!$existing) {
-            return $this->insert($data, false); // Returns false on failure
+            return $this->insert($data, false);
         }
 
-        // If it already exists, consider it a success for the import process
         return true;
     }
 }
