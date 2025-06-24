@@ -1,6 +1,4 @@
-Claro, aquí tienes el contenido completo en formato Markdown, listo para que lo copies y lo pegues directamente en un archivo llamado `README.md` en la raíz de tu proyecto.
 
-````markdown
 # Integrador CMDB con Aleph Manager
 
 Este es un proyecto web desarrollado con **CodeIgniter 4** que sirve como intermediario para gestionar registros de una CMDB (Base de Datos de Gestión de la Configuración) a través de la API de **Aleph Manager**.
@@ -130,4 +128,3 @@ A continuación se describe el propósito de los archivos clave que proporcionas
 | `GET`  | `/cmdb/exportar/(:num)`           | `CmdbController::exportar/$1`        | Inicia la exportación de registros para una categoría. |
 | `GET`  | `/cmdb/importar-vista/(:num)`     | `CmdbController::importarVista/$1`   | Muestra el formulario para importar archivos.        |
 | `POST` | `/cmdb/importar`                  | `CmdbController::importar`           | Procesa el archivo subido para la importación.       |
-````
