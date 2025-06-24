@@ -77,8 +77,8 @@ Sigue estos pasos para poner en marcha el proyecto en un entorno de desarrollo l
 
     -   Añade estas líneas a tu archivo `.env`:
         ```ini
-        aleph.api.baseUrl = '[https://qa.alephmanager.com/API/](https://qa.alephmanager.com/API/)'
-        aleph.api.key = 'zkUMrLN8xKEtrCr4Y7hYfLw8k!utbb'
+        aleph.api.baseUrl = '[https://qa.url.com/API/](https://qa.url.com/API/)'
+        aleph.api.key = 'token'
         ```
 
     -   Modifica el constructor de `app/Libraries/AlephAPI.php` para leer estas variables:
